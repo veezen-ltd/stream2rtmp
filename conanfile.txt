@@ -1,0 +1,7 @@
+[requires]
+folly/2020.08.10.00
+bzip2/1.0.8
+double-conversion/3.2.0
+[generators]
+CMakeDeps
+CMakeToolchain

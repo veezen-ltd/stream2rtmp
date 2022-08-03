@@ -1,0 +1,22 @@
+libbz2-dev
+
+echo ${folly_DIR}
+/home/b0n3/Desktop/veezen/RsocketRtmpRtsp2rtmp/build/cmake-build-release
+install folly
+then install rsocket
+ args = std_cmake_args + %w[
+      -DFOLLY_USE_JEMALLOC=OFF
+    ]
+
+    system "cmake", "-S", ".", "-B", "build/shared",
+                    "-DBUILD_SHARED_LIBS=ON",
+                    "-DCMAKE_INSTALL_RPATH=#{rpath}",
+                    *args
+    system "cmake", "--build", "build/shared"
+    system "cmake", "--install", "build/shared"
+
+    system "cmake", "-S", ".", "-B", "build/static",
+                    "-DBUILD_SHARED_LIBS=OFF",
+                    *args
+    system "cmake", "--build", "build/static"
+    lib.install "build/static/libfolly.a", "build/static/folly/libfollybenchmark.a"
