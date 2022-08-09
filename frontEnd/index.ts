@@ -16,6 +16,7 @@ function make(data: string): Payload<string, string> {
     metadata: '',
   };
 }
+let id = null;
 
 function logRequest(type: string, payload: Payload<string, string>) {
   console.log(`Responder response to ${type}, data: ${payload.data || 'null'}`);
@@ -27,6 +28,7 @@ class EchoResponder implements Responder<string, string> {
   }
 
   fireAndForget(payload: Payload<string, string>): void {
+    id = payload.data;
     logRequest('fire-and-forget', payload);
   }
 
@@ -85,25 +87,28 @@ const client = new RSocketClient({
     keepAlive: 1000000,
     lifetime: 100000,
     metadataMimeType: 'text/plain',
+    payload: {
+      metadata: 'sdfsdf' // interpreted as Setup route ?
+    },
     
   },
   responder: new EchoResponder(),
-  leases: () =>
-    new Leases()
-      .receiver(receivedLeasesLogger)
-      .sender(stats => periodicLeaseSender(10000, 7000, 10)),
+  // leases: () =>
+  //   new Leases()
+  //     .receiver(receivedLeasesLogger)
+  //     .sender(stats => periodicLeaseSender(10000, 7000, 10)),
   transport: getClientTransport(address.host, address.port),
 });
 
 client.connect()
 .subscribe({
   onComplete: rSocket => {
-    every(1000).subscribe({
+    every(100).subscribe({
       onNext: time => {
         console.log(`Requester availability: ${rSocket.availability()}`);
         rSocket
-          .requestResponse({
-            data: time.toString(),
+          .requestStream({
+            data: id,
             metadata: '',
           })
           .subscribe({
