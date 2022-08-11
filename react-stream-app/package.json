@@ -59,6 +59,7 @@
     ]
   },
   "devDependencies": {
-    "@types/rsocket-tcp-client": "^0.0.1"
+    "@types/rsocket-tcp-client": "^0.0.1",
+    "@types/rsocket-websocket-client": "^0.0.4"
   }
 }

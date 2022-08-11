@@ -82,7 +82,6 @@ function periodicLeaseSender(
 
 const client = new RSocketClient({
   setup: {
-  
     dataMimeType: 'text/plain',
     keepAlive: 1000000,
     lifetime: 100000,

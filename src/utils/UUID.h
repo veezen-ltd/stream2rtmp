@@ -30,7 +30,7 @@ namespace uuid {
         UUID();
         uuid::UUID &getRef();
          UUID(const UUID &uuid);
-        friend std::ostream &operator<<(std::ostream &os, const UUID &uuid1);
+
 
         UUID(std::unique_ptr<UUID>  uuid);
 
@@ -63,5 +63,6 @@ namespace uuid {
             }
         };
     };
+    std::ostream &operator<<(std::ostream &os, UUID uuid1);
 }
 #endif //VEEZEN2RTMP_UUID_H

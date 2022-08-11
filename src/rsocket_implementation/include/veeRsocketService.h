@@ -11,21 +11,23 @@
 #include "RsocketResponder.h"
 
 namespace veezen{
-class VeeRsocketService : rsocket::RSocketServiceHandler {
+class VeeRsocketService : public  rsocket::RSocketServiceHandler {
 private:
 
     folly::Expected<rsocket::RSocketConnectionParams, rsocket::RSocketException>
     onNewSetup(const rsocket::SetupParameters &parameters) override {
 
         LOG(INFO) << "onNewSetup" << parameters;
-        auto client = veezen::Client::fromJson(parameters.payload.data->moveToFbString()
-                .toStdString());
-        client->setResumeToken(parameters.token);
-        veezen::VeeRsocketContext::getInstance()->clientSetup(client);
+//        auto client = nullptr;
+//        auto client = veezen::Client<veezen::STREAM, veezen::STREAM, veezen::TOKEN>::
+//                fromJson(parameters.payload.data->moveToFbString()
+//                .toStdString());
+//       // client->setResumeToken(parameters.token);
+//        veezen::VeeRsocketContext::getInstance()->clientSetup(client);
 
         return rsocket::RSocketConnectionParams(std::shared_ptr<veezen::RsocketResponder>(),
                 rsocket::RSocketStats::noop(),
-                std::make_shared<veezen::RsocketConnectionEventHandler>(client));
+                std::make_shared<veezen::RsocketConnectionEventHandler>(nullptr));
     }
 
     void onNewRSocketState(std::shared_ptr<rsocket::RSocketServerState> ptr,

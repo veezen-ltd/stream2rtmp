@@ -1,133 +1,109 @@
 
-import { Frame } from 'rsocket-types';
-import {Responder, Payload} from 'rsocket-types';
-import  {Leases, Lease, RSocketClient} from 'rsocket-core';
-import {Flowable, Single, every} from 'rsocket-flowable';
-import RSocketTcpClient from 'rsocket-tcp-client';
+import { Subject } from 'rxjs';
+import { Payload, ReactiveSocket} from 'rsocket-types';
+import {from } from 'rxjs';
+import {tap} from 'rxjs/operators';
+import  { RSocketClient} from 'rsocket-core';
+import RSocketWebsocketClient from 'rsocket-websocket-client';
+// import RSocketTcpClient from 'rsocket-tcp-client';
+import  WebsocketClientTransport  from "rsocket-websocket-client";
+// import { WebSocket } from 'ws';
+import { streamResponder } from './rsocketResponder';
+import RsocketClient from '../RsocketClient';
+
 
 
 export class rsocketService {
-    private _reset$ = Single<void>.never();
-    private _remoteData$ =  Flowable<Frame>.just(null);
+  private _reset$ = new Subject<void>();
+  private _remoteData$ = new Subject<any>();
   
     // Stream APIs
-    public readonly reset$ = this._reset$;
-    public readonly remoteData$ = this._remoteData$;
+    public readonly reset$ = this._reset$.asObservable();
+    public readonly remoteData$ = this._remoteData$.asObservable();
 
-    private   address = {host: '127.0.0.1', port: 9898};
+    private   address = {host: 'localhost', port: 9898};
+    public  client: any;
+    public  clientId: any;
+   
+private  getClientTransport(host: string, port: number) {
+  return  new WebsocketClientTransport({
+    url: "ws://" + host + ":" + port,
+    wsCreator: (url: string) => new WebSocket(url) as any,
+  })
+}
 
-    private client: RSocketTcpClient;
-//  make(data: string, metadata: string): Payload<string, string> {
-//   return {
-//     data,
-//     metadata: metadata,
-//   };
-// }
+private connect= (session: any, webCam:any): Promise<any> => {
 
+  this.clientId = session['id'];
+  console.log('clientId', this.clientId);
+  this.client = new RSocketClient({
+    setup: {
+      // payload:
+      // {
+      //   data:JSON.stringify(session),
+      //   metadata:'application/json'
+      // },
+      dataMimeType: 'application/json',
+      keepAlive: 60000,
+      lifetime: 180000,
+      metadataMimeType: 'application/json',
+    },
+    responder: new streamResponder(webCam),
+    transport: this.getClientTransport(this.address.host,
+       this.address.port),
+    }
+  );
+  console.log('client', this.client);
+  return  new  Promise<any>((resolve, reject) => {
+     this.client.connect()
+    .subscribe({
+      onError: console.log,
+      onComplete: (rsocket:any) => {
+        console.log("Success! We have established an RSocket connection.");
+    },
+      // onComplete:(socket: ReactiveSocket<any, any>)=> {
+      //   socket.requestStream({
+      //     data: this.clientId,
+      //     metadata: '',
+      //   })
+      //   .subscribe({
+      //     onNext:( response: Payload<any, any>) => {
+      //       resolve(response.data);
+      //       console.log('response', response);  
+      //     },
+      //     onError: console.log,
+      //   })
+      // },
+    });
+  });
+}
 
 
 public  logRequest(type: string, payload: Payload<string, string>) {
   console.log(`Responder response to ${type}, data: ${payload.data || 'null'}`);
 }
 
-// class EchoResponder implements Responder<string, string> {
-//   requestResponse(payload: Payload<string, string>): Single<Payload<string, string>> {
-//     throw new Error('Method not implemented.');
-//   }
-//   requestStream(payload: Payload<string, string>): Flowable<Payload<string, string>> {
-//     throw new Error('Method not implemented.');
-//   }
-//   requestChannel(payloads: Flowable<Payload<string, string>>): Flowable<Payload<string, string>> {
-//     throw new Error('Method not implemented.');
-//   }
-//   metadataPush(payload: Payload<string, string>): Single<void> {
-//     return Single.error(new Error('not implemented'));
-//   }
 
-//   fireAndForget(payload: Payload<string, string>): void {
-//     logRequest('fire-and-forget', payload);
-//   }
+public reset = () => {
+  this._reset$.next();
+};
+public callRemoteAPI = (session: any, webCam:any) => {
+  from(this._fetchData(session, webCam))
 
-//   // requestResponse(
-//   //   payload: Payload<string, string>,
-//   // ): Single<Payload<string, string>> {
-//   //   logRequest('request-response', payload);
-//   //   return Single.of(make('client response'));
-//   // }
+    .pipe(
+      tap({
+        next: (resp) => this._remoteData$.next(resp),
+        error: (err) => this._remoteData$.error(err),
+      })
+    )
+    .subscribe();
+};
 
-//   // requestStream(
-//   //   payload: Payload<string, string>,
-//   // ): Flowable<Payload<string, string>> {
-//   //   logRequest('request-stream', payload);
-//   //   return Flowable.just(make('client stream response'));
-//   // }
+private _fetchData = (session: any, webCam:any): Promise<any> => {
 
-//   // requestChannel(
-//   //   payloads: Flowable<Payload<string, string>>,
-//   // ): Flowable<Payload<string, string>> {
-//   //   return Flowable.just(make('client channel response'));
-//   // }
-// }
+  // return the Promise the resolves the http call;
+  console.log('calling remote api');
+  return this.connect(session, webCam);
+};
 
-private  getClientTransport(host: string, port: number) {
-  return new RSocketTcpClient({
-    host,
-    port,
-  });
-
-}
-
-
-public   connectRsocket()
-{
- this.client = new RSocketClient({
-    setup: {
-    
-      dataMimeType: 'text/plain',
-      keepAlive: 1000000,
-      lifetime: 100000,
-      metadataMimeType: 'text/plain',
-      payload: {
-        metadata: 'Application/json',
-        // data: JSON.stringify(userInfo)
-      },
-      
-    },
-    // responder: new EchoResponder(),
-    // leases: () =>
-    //   new Leases()
-    //     .receiver(receivedLeasesLogger)
-    //     .sender(stats => periodicLeaseSender(10000, 7000, 10)),
-    transport: this.getClientTransport(this.address.host, this.address.port),
-  })
-}
-  
-    // Method APIs
-    public reset = () => {
-      this._reset$.then();
-    };
-
-
-    // public getStream = (client:  ) => 
-    // {
-    //     // client..subscribe({
-    //     //     onNext: (payload) => {
-    //     //         this._remoteData$.next(payload);
-    //     //     }
-    //     // });
-    // }
-    // public callRemoteAPI = (input: string) => {
-    //   from(this._fetchData(input))
-    //     .pipe(
-    //       tap({
-    //         next: (resp) => this._remoteData$.next(resp),
-    //         error: (err) => this._remoteData$.error(err),
-    //       })
-    //     )
-    //     .subscribe();
-    // };
-  
-    // private _fetchData = (input: string): Promise<string> => {
-    //   // return the Promise the resolves the http call;
-    // };
-  };
+};

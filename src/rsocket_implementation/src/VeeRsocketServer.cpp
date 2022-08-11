@@ -4,6 +4,7 @@
 
 
 #include "../include/VeeRsocketServer.h"
+#include "../include/veeRsocketService.h"
 
 veezen::VeeRsocketServer::VeeRsocketServer(std::string address, int port, int numThreads)
 : address(std::move(address)), port(port), numThreads(numThreads), isRunning(false) {
@@ -28,7 +29,9 @@ void veezen::VeeRsocketServer::start() {
     thread = new std::thread([this]() {
 
         // @Todo plug rsocketService here and start listening
-        //this->rs->startAndPark();
+        LOG(INFO) << "Server is listening on " << this->address << ":" << this->port << std::endl;
+        this->rs->startAndPark(std::make_shared<veezen::VeeRsocketService>());
+        LOG(INFO) << "Server is listening on " << this->address << ":" << this->port << std::endl;
     });
     this->isRunning = true;
 }

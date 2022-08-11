@@ -78,8 +78,8 @@ bool uuid::UUID::operator!=(const uuid::UUID &rhs) const {
     return !(rhs == *this);
 }
 
-std::ostream &uuid::operator<<(std::ostream &os, const uuid::UUID &uuid1) {
-    os  << uuid1._id;
+std::ostream &uuid::operator<<(std::ostream &os, UUID uuid1) {
+    os  << uuid1.getId();
     return os;
 }
 
