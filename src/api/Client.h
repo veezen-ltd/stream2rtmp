@@ -31,6 +31,7 @@ namespace veezen {
         std::shared_ptr<uuid::UUID> streamId;
         std::vector<std::string> rtmpUrls;
         std::vector<std::string> params;
+        bool setUp = false;
         TOKEN resumeToken;
         static std::shared_ptr<Client<IN , OUT, TOKEN>> fromDynamic(folly::dynamic json);
         IN input;

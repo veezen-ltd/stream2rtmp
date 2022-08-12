@@ -17,28 +17,33 @@ file(GLOB rsocketImple_SRC
 add_executable(${PROJECT_NAME}
         main.cpp
         src/rsocket_implementation/src/Client.cpp
-        src/rsocket_implementation/src/VeeRsocketServer.cpp
-        src/rsocket_implementation/include/veeRsocketService.h
-        src/rsocket_implementation/src/VeeRsocketContext.cpp
-        src/rsocket_implementation/include/VeeRsocketContext.h
-        src/rsocket_implementation/include/RsocketConnectionEventHandler.h
-        src/rsocket_implementation/src/RsocketResponder.cpp
-        src/rsocket_implementation/include/RsocketResponder.h
-
-        src/utils/UUID.cpp)
+#        src/rsocket_implementation/src/VeeRsocketServer.cpp
+#        src/rsocket_implementation/include/veeRsocketService.h
+#        src/rsocket_implementation/src/VeeRsocketContext.cpp
+#        src/rsocket_implementation/include/VeeRsocketContext.h
+#        src/rsocket_implementation/include/RsocketConnectionEventHandler.h
+#        src/rsocket_implementation/src/RsocketResponder.cpp
+#        src/rsocket_implementation/include/RsocketResponder.h
+        src/utils/UUID.cpp
+        src/websocket_implementation/src/WebSocketServer.cpp
+        src/websocket_implementation/src/WebsocketFrame.cpp)
 target_include_directories(${PROJECT_NAME} PUBLIC ./src/api)
 target_include_directories(${PROJECT_NAME} PUBLIC ./src/utils)
+target_include_directories(${PROJECT_NAME} PUBLIC /usr/local/include/websocketpp/)
 target_include_directories(${PROJECT_NAME} PUBLIC /usr/local/include/folly)
 target_include_directories(${PROJECT_NAME} PUBLIC /usr/local/include/yarpl)
 target_include_directories(${PROJECT_NAME} PUBLIC /usr/local/include/rsocket)
 find_package(boost_context)
+find_package(boost_system)
+
 find_package(yarpl )
-find_package(rsocket )
+#find_package(rsocket )
 find_package(folly)
 find_package(boost_regex)
 #add_subdirectory(src/rsocket_implementation)
 #add_subdirectory(src/utils)
-target_link_libraries(${PROJECT_NAME} PUBLIC rsocket yarpl  glog boost_context folly   boost_regex pthread gflags
+target_link_libraries(${PROJECT_NAME} PUBLIC  yarpl
+        glog boost_context folly   boost_regex pthread gflags boost_system double-conversion
         ${GFLAGS_LIBRARY})
 
 #target_include_directories(veezen2rtmp PRIVATE ./includes)

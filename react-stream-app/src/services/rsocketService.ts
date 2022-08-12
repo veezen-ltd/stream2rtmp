@@ -21,7 +21,7 @@ export class rsocketService {
     public readonly reset$ = this._reset$.asObservable();
     public readonly remoteData$ = this._remoteData$.asObservable();
 
-    private   address = {host: 'localhost', port: 9898};
+    private   address = {host: '172.17.0.2', port: 9999};
     public  client: any;
     public  clientId: any;
    
@@ -43,10 +43,10 @@ private connect= (session: any, webCam:any): Promise<any> => {
       //   data:JSON.stringify(session),
       //   metadata:'application/json'
       // },
-      dataMimeType: 'application/json',
+      dataMimeType: 'plain/text',
       keepAlive: 60000,
       lifetime: 180000,
-      metadataMimeType: 'application/json',
+       metadataMimeType: 'plain/text',
     },
     responder: new streamResponder(webCam),
     transport: this.getClientTransport(this.address.host,
