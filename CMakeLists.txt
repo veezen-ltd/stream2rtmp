@@ -16,19 +16,23 @@ file(GLOB rsocketImple_SRC
 #set(DOWNLOAD_DIR /home/b0n3/Downloads)
 add_executable(${PROJECT_NAME}
         main.cpp
-        src/rsocket_implementation/src/Client.cpp
-#        src/rsocket_implementation/src/VeeRsocketServer.cpp
+        src/utils/UUID.cpp
+        #        src/rsocket_implementation/src/VeeRsocketServer.cpp
 #        src/rsocket_implementation/include/veeRsocketService.h
 #        src/rsocket_implementation/src/VeeRsocketContext.cpp
 #        src/rsocket_implementation/include/VeeRsocketContext.h
 #        src/rsocket_implementation/include/RsocketConnectionEventHandler.h
 #        src/rsocket_implementation/src/RsocketResponder.cpp
 #        src/rsocket_implementation/include/RsocketResponder.h
-        src/utils/UUID.cpp
+
         src/websocket_implementation/src/WebSocketServer.cpp
-        src/websocket_implementation/src/WebsocketFrame.cpp)
+        src/websocket_implementation/src/WebsocketFrame.cpp
+        src/websocket_implementation/src/WebsocketContext.cpp
+        src/websocket_implementation/src/EventHandler.cpp
+        src/websocket_implementation/src/SessionMessageHandler.cpp)
 target_include_directories(${PROJECT_NAME} PUBLIC ./src/api)
 target_include_directories(${PROJECT_NAME} PUBLIC ./src/utils)
+target_include_directories(${PROJECT_NAME} PUBLIC ./src/websocket_implementation/includes)
 target_include_directories(${PROJECT_NAME} PUBLIC /usr/local/include/websocketpp/)
 target_include_directories(${PROJECT_NAME} PUBLIC /usr/local/include/folly)
 target_include_directories(${PROJECT_NAME} PUBLIC /usr/local/include/yarpl)

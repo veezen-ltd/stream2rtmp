@@ -14,19 +14,20 @@ namespace veezen {
     private:
         std::string type;
         std::shared_ptr<uuid::UUID> id;
-        std::string data;
+        folly::dynamic data;
+
     public:
         WebsocketFrame(std::string type,
                        std::shared_ptr<uuid::UUID> id,
-                       std::string data);
+                       folly::dynamic data);
 
         static std::shared_ptr<WebsocketFrame> fromJson(std::string const  &frame);
 
-        std::string &getType();
+       const std::string &getType() const;
 
-        std::shared_ptr<uuid::UUID> &getId();
+        const std::shared_ptr<uuid::UUID> &getId()const;
 
-        std::string &getData();
+        const folly::dynamic &getData()const;
 
 
     };

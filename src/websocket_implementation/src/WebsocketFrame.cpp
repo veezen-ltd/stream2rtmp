@@ -2,11 +2,17 @@
 // Created by b0n3 on 8/12/22.
 //
 
+#include <utility>
+
 #include "../includes/WebsocketFrame.h"
 
 
 veezen::WebsocketFrame::WebsocketFrame(std::string type,
-                                       std::shared_ptr<uuid::UUID> id, std::string data): type(type), id(id), data(data) {}
+                                       std::shared_ptr<uuid::UUID> id,
+                                       folly::dynamic data):
+                                       type(std::move(type)),
+                                       id(std::move(id)),
+                                       data(std::move(data)) {}
 
 
 std::shared_ptr<veezen::WebsocketFrame> veezen::WebsocketFrame::fromJson(std::string const &frame) {
@@ -16,18 +22,18 @@ std::shared_ptr<veezen::WebsocketFrame> veezen::WebsocketFrame::fromJson(std::st
     std::shared_ptr<uuid::UUID> id = nullptr;
     if (!typestring.isNull())
         id = uuid::UUID::fromString(typestring.asString());
-    auto data = json["data"].asString();
+    auto data = std::move(json["data"]);
     return std::make_shared<veezen::WebsocketFrame>(type, id, data);
 }
 
-std::string &veezen::WebsocketFrame::getType() {
+const std::string &veezen::WebsocketFrame::getType() const {
     return type;
 }
 
-std::shared_ptr<uuid::UUID> &veezen::WebsocketFrame::getId() {
+const std::shared_ptr<uuid::UUID> &veezen::WebsocketFrame::getId()  const{
     return id;
 }
 
-std::string &veezen::WebsocketFrame::getData() {
+const folly::dynamic &veezen::WebsocketFrame::getData() const {
     return data;
 }
