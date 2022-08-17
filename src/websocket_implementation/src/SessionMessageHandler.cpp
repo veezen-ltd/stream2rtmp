@@ -13,11 +13,20 @@ namespace veezen {
         if (id != nullptr)
             throw std::runtime_error("SessionMessageHandler::handle: id is not null");
         auto context = veezen::WebsocketContext::getInstance();
-        auto client =  veeClient();
+        auto client = std::make_shared<WebsocketClient>();
+        if(context->getClient(hdl) != nullptr) {
+            context->getServer()->close(hdl,
+                                        websocketpp::close::status::policy_violation,
+                                        "Already connected");
+            context->deleteClient(hdl);
+            return ;
+        }
         context->addClient(hdl,client);
         context->getServer()->send(hdl,
-                                   client->getId()->getId().toStdString() ,
+                                   folly::toJson(("id",client->getId()->getId())) ,
                                    websocketpp::frame::opcode::text);
+        auto streamContext = streamContext::getInstance();
+        streamContext->registerInQueue(hdl);
     }
 
     bool SessionMessageHandler::canHandle(const std::string &type) {

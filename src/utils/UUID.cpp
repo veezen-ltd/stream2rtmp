@@ -14,10 +14,10 @@ uuid::UUID::UUID() {
 }
 
 
-std::unique_ptr<uuid::UUID> uuid::UUID::generateRandomUUID() {
-    std::unique_ptr<uuid::UUID> uuid = std::make_unique<uuid::UUID>();
+std::shared_ptr<uuid::UUID> uuid::UUID::generateRandomUUID() {
+    std::shared_ptr<uuid::UUID> uuid = std::make_shared<uuid::UUID>();
     uuid->genrateStringId();
-    return nullptr;
+    return uuid;
 }
 
 folly::fbstring uuid::UUID::getId() {

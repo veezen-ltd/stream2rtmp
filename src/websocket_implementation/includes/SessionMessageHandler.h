@@ -7,7 +7,8 @@
 
 
 #include "MessageService.h"
-
+#include "WebsocketEventLoop.h"
+using streamContext = veezen::WebsocketEventLoop::streamContext;
 namespace veezen {
 
     class SessionMessageHandler : public  MessageService {

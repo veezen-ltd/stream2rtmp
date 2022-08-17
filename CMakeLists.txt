@@ -29,14 +29,17 @@ add_executable(${PROJECT_NAME}
         src/websocket_implementation/src/WebsocketFrame.cpp
         src/websocket_implementation/src/WebsocketContext.cpp
         src/websocket_implementation/src/EventHandler.cpp
-        src/websocket_implementation/src/SessionMessageHandler.cpp)
+        src/websocket_implementation/src/SessionMessageHandler.cpp
+        src/websocket_implementation/src/ClientSetupMessageHandler.cpp
+        src/websocket_implementation/src/WebsocketEventLoop.cpp
+        src/websocket_implementation/src/WebsocketClient.cpp src/websocket_implementation/src/StreamMessageHandler.cpp src/websocket_implementation/includes/StreamMessageHandler.h)
 target_include_directories(${PROJECT_NAME} PUBLIC ./src/api)
 target_include_directories(${PROJECT_NAME} PUBLIC ./src/utils)
 target_include_directories(${PROJECT_NAME} PUBLIC ./src/websocket_implementation/includes)
 target_include_directories(${PROJECT_NAME} PUBLIC /usr/local/include/websocketpp/)
 target_include_directories(${PROJECT_NAME} PUBLIC /usr/local/include/folly)
 target_include_directories(${PROJECT_NAME} PUBLIC /usr/local/include/yarpl)
-target_include_directories(${PROJECT_NAME} PUBLIC /usr/local/include/rsocket)
+#target_include_directories(${PROJECT_NAME} PUBLIC /usr/local/include/rsocket)
 find_package(boost_context)
 find_package(boost_system)
 

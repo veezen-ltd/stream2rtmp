@@ -6,8 +6,8 @@
 #define VEEZEN2RTMP_CLIENT_H
 #include <folly/json.h>
 #include "UUID.h"
-#include <rsocket/RSocket.h>
-#include <PackedSyncPtr.h>
+//#include <rsocket/RSocket.h>
+//#include <PackedSyncPtr.h>
 /*
  * This class is used to communicate with the server.
  * @Schema json:
@@ -24,7 +24,7 @@
  */
 namespace veezen {
     // @Todo make this a template
-    template<typename IN , typename OUT, typename TOKEN>
+    template<class T,  typename FRAME, typename TOKEN>
     class Client {
     private:
         std::shared_ptr<uuid::UUID> id;
@@ -33,8 +33,6 @@ namespace veezen {
         std::vector<std::string> params;
         bool setUp = false;
         TOKEN resumeToken;
-        IN input;
-        OUT output;
     public:
         Client()
         {
@@ -42,27 +40,29 @@ namespace veezen {
             streamId = nullptr;
         }
 
-     static  std::shared_ptr<Client<IN, OUT, TOKEN>> fromDynamic(folly::dynamic json) {
-            std::shared_ptr<Client> client = std::make_shared<Client>();
-            client->id =  uuid::UUID();
-            client->streamId = uuid::UUID::fromString(json["streamId"].getString());
-            for (auto &rtmpUrl : json["rtmpUrls"])
-                client->rtmpUrls.push_back(rtmpUrl.getString());
-            for (auto &param : json["params"])
-                client->params.push_back(param.getString());
-            return client;
+        void setId(const std::shared_ptr<uuid::UUID> &id) {
+            Client::id = id;
         }
 
-
-
-        void setUpInput(IN in) {
-            input = in;
+        void setStreamId(const std::shared_ptr<uuid::UUID> &streamId) {
+            Client::streamId = streamId;
         }
 
-
-        void setUpOutput(OUT out) {
-            output = out;
+        void setRtmpUrls(const std::vector<std::string> &rtmpUrls) {
+            Client::rtmpUrls = rtmpUrls;
         }
+
+        void setParams(const std::vector<std::string> &params) {
+            Client::params = params;
+        }
+
+        void setSetUp(bool setUp) {
+            Client::setUp = setUp;
+        }
+
+        virtual void inCallback(FRAME frame)  = 0;
+        virtual void outCallback(FRAME frame) = 0;
+
 
         const std::shared_ptr<uuid::UUID> &getId() const {
             return this->id;
@@ -77,23 +77,24 @@ namespace veezen {
         const std::vector<std::string> &getRtmpUrls() const {
             return rtmpUrls;
         }
-
-
-        std::shared_ptr<veezen::Client<IN, OUT, TOKEN>> fromJson(const std::string &json) {
+        void addRtmpUrl(const std::string &rtmpUrl) {
+            rtmpUrls.push_back(rtmpUrl);
+        }
+        void addParam(const std::string &param) {
+            params.push_back(param);
+        }
+        void fromDynamic(folly::dynamic json) {
+            this->setId(uuid::UUID::fromString(json["id"].getString()));
+            this->setStreamId(uuid::UUID::fromString(json["streamId"].getString()));
+            for (auto &rtmpUrl : json["rtmpUrls"])
+                this->addRtmpUrl(rtmpUrl.getString());
+            for (auto &param : json["params"])
+                this->addParam(param.getString());
+        }
+        virtual std::shared_ptr<T> fromJson(const std::string &json) {
             folly::dynamic dynamic = folly::parseJson(json);
-            return fromDynamic(dynamic);
+            return T::fromDynamic(dynamic);
         }
-
-
-        const IN &getInput() const {
-            return input;
-        }
-
-
-        const OUT &getOutput() const {
-            return output;
-        }
-
 
         const TOKEN &getResumeToken() const {
             return resumeToken;

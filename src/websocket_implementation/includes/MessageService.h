@@ -13,7 +13,7 @@ public:
     MessageService() = default;
     virtual ~MessageService() = default;
     virtual bool canHandle(const std::string &type) = 0  ;
-   virtual  bool canHandle(std::shared_ptr<veezen::WebsocketFrame> frame) = 0;
+   virtual bool canHandle(std::shared_ptr<veezen::WebsocketFrame> frame) = 0;
      virtual void handle(std::shared_ptr<veezen::WebsocketFrame> frame,connection_hdl hdl) = 0;
 };
 

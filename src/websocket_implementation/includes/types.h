@@ -6,15 +6,15 @@
 #define VEEZEN2RTMP_TYPES_H
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
-#include <yarpl/flowable/Flowable.h>
 #include <map>
-
+#include <futures/Future.h>
+//#include "StreamContext.h"
+#include "WebsocketClient.h"
 using websocketpp::connection_hdl;
 
-typedef std::string TOKEN;
+
 typedef websocketpp::server<websocketpp::config::asio> server_t;
-typedef std::shared_ptr<yarpl::flowable::Flowable<server_t::message_ptr>> STREAM;
-typedef std::shared_ptr<veezen::Client<STREAM, STREAM, TOKEN>> veeClient;
-typedef std::map<connection_hdl,veeClient,
-        std::owner_less<connection_hdl>> con_list;
+
+
+#define  MAKE_EMPTY_CLIENT std::make_shared<WebsocketClient>>()
 #endif //VEEZEN2RTMP_TYPES_H

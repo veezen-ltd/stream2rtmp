@@ -14,11 +14,10 @@
 #include <Client.h>
 #include <yarpl/flowable/Flowable.h>
 #include "types.h"
-
+#include "WebsocketEventLoop.h"
 
 using websocketpp::connection_hdl;
-//using websocketpp::lib::placeholders::_1;
-//using websocketpp::lib::placeholders::_2;
+
 using websocketpp::lib::bind;
 
 namespace veezen {
@@ -27,6 +26,7 @@ class WebSocketServer : public veezen::Server{
 private:
     // @Todo: create connection to
     std::thread serverThread;
+    WebsocketEventLoop eventLoop;
 //    std::shared_ptr<server_t> server;
 //    std::shared_ptr<con_list> connections;
 

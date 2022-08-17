@@ -106,4 +106,4 @@ private _fetchData = (session: any, webCam:any): Promise<any> => {
   return this.connect(session, webCam);
 };
 
-};
+}

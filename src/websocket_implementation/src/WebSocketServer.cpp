@@ -18,7 +18,7 @@ void veezen::WebSocketServer::setUp() {
     server->set_message_handler([this] (connection_hdl hdl, server_t::message_ptr msg) {
         veezen::EventHandler::on_message( hdl, msg);
     });
-
+    eventLoop.setUp();
 }
 
 void veezen::WebSocketServer::start() {
@@ -28,22 +28,25 @@ void veezen::WebSocketServer::start() {
         server->start_accept();
         server->run();
     });
+    eventLoop.start();
 
 
 }
 
 void veezen::WebSocketServer::stop() {
+    auto server = veezen::WebsocketContext::getInstance()->getServer();
+    if (server == nullptr)
+        return;
+//    if (server->is_listening()) {
+//        server->stop_listening();
+//    }
+    server->stop();
     serverThread.join();
+    eventLoop.stop();
 
 }
 
 veezen::WebSocketServer::~WebSocketServer() {
-    auto server = veezen::WebsocketContext::getInstance()->getServer();
-    if (server == nullptr)
-        return;
-    if (server->is_listening()) {
-        server->stop_listening();
-    }
-    server->stop();
+    stop();
 
 }

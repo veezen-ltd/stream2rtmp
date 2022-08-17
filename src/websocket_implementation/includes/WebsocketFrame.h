@@ -7,6 +7,7 @@
 #include <string>
 #include <folly/json.h>
 #include <UUID.h>
+#include <iostream>
 #include <ostream>
 
 namespace veezen {

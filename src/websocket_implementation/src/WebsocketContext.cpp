@@ -5,7 +5,8 @@
 #include "../includes/WebsocketContext.h"
 
 #include "../includes/SessionMessageHandler.h"
-
+#include "StreamMessageHandler.h"
+#include "types.h"
 std::shared_ptr<veezen::WebsocketContext> veezen::WebsocketContext::instance = nullptr;
 
 const std::shared_ptr<con_list> &veezen::WebsocketContext::getConnections() const {
@@ -21,6 +22,7 @@ veezen::WebsocketContext::WebsocketContext() {
     messageServices = std::vector<std::shared_ptr<MessageService>>();
     server = std::make_shared<websocketpp::server<websocketpp::config::asio>>();
     messageServices.push_back(std::make_shared<veezen::SessionMessageHandler>());
+    messageServices.push_back(std::make_shared<StreamMessageHandler>());
 }
 
 std::shared_ptr<veezen::WebsocketContext> veezen::WebsocketContext::getInstance() {
@@ -36,6 +38,8 @@ void veezen::WebsocketContext::addClient(connection_hdl &hdl, veeClient &client)
 }
 
 veeClient veezen::WebsocketContext::getClient(connection_hdl hdl) {
+    if (connections->find(hdl) == connections->end())
+        return nullptr;
     return connections->at(hdl);
 }
 
@@ -46,5 +50,19 @@ std::shared_ptr<MessageService>
             return messageService;
     }
     throw std::runtime_error("no message service found");
+}
+
+void veezen::WebsocketContext::deleteClient(connection_hdl hdl) {
+    if (connections->find(hdl) == connections->end())
+        return;
+    connections->erase(hdl);
+}
+
+connection_hdl WebsocketContext::getConnection(std::shared_ptr<uuid::UUID> id) {
+    for(const auto& connection : *connections) {
+        if(connection.second->getId() == id)
+            return connection.first;
+    }
+    return connection_hdl();
 }
 

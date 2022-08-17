@@ -36,7 +36,7 @@ namespace uuid {
 
         static std::shared_ptr<UUID> fromString(folly::fbstring uuid);
 
-        static std::unique_ptr<UUID> generateRandomUUID();
+        static std::shared_ptr<UUID> generateRandomUUID();
 
         bool operator==(const UUID &rhs) const;
 
