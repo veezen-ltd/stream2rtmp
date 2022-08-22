@@ -24,11 +24,18 @@ namespace veezen {
 
         static std::shared_ptr<WebsocketFrame> fromJson(std::string const  &frame);
 
-       const std::string &getType() const;
+        void setType(const std::string &type);
+
+        void setId(const std::shared_ptr<uuid::UUID> &id);
+
+        void setData(const folly::dynamic &data);
+
+        const std::string &getType() const;
 
         const std::shared_ptr<uuid::UUID> &getId()const;
 
         const folly::dynamic &getData()const;
+        const std::string toJson() const;
 
 
     };

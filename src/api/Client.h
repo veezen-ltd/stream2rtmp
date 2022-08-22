@@ -60,8 +60,8 @@ namespace veezen {
             Client::setUp = setUp;
         }
 
-        virtual void inCallback(FRAME frame)  = 0;
-        virtual void outCallback(FRAME frame) = 0;
+        virtual void inCallback(TOKEN,FRAME frame)  = 0;
+        virtual void outCallback(TOKEN,FRAME frame) = 0;
 
 
         const std::shared_ptr<uuid::UUID> &getId() const {

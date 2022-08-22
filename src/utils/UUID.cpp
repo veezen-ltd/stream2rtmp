@@ -71,7 +71,7 @@ uuid::UUID::UUID(std::unique_ptr<UUID> uuid): UUID() {
 }
 
 bool uuid::UUID::operator==(const uuid::UUID &rhs) const {
-    return _id == rhs._id;
+    return strcmp(this->_id.c_str(), rhs._id.c_str()) == 0;
 }
 
 bool uuid::UUID::operator!=(const uuid::UUID &rhs) const {

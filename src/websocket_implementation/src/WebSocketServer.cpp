@@ -37,9 +37,9 @@ void veezen::WebSocketServer::stop() {
     auto server = veezen::WebsocketContext::getInstance()->getServer();
     if (server == nullptr)
         return;
-//    if (server->is_listening()) {
-//        server->stop_listening();
-//    }
+    if (server->is_listening()) {
+        server->stop_listening();
+    }
     server->stop();
     serverThread.join();
     eventLoop.stop();

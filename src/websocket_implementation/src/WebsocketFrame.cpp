@@ -37,3 +37,24 @@ const std::shared_ptr<uuid::UUID> &veezen::WebsocketFrame::getId()  const{
 const folly::dynamic &veezen::WebsocketFrame::getData() const {
     return data;
 }
+
+const std::string veezen::WebsocketFrame::toJson() const {
+    folly::dynamic json = folly::dynamic::object;
+    json["type"] = type;
+    if (id != nullptr)
+        json["id"] = id->getId();
+    json["data"] = data;
+    return folly::toJson(json);
+}
+
+void veezen::WebsocketFrame::setType(const std::string &type) {
+    WebsocketFrame::type = type;
+}
+
+void veezen::WebsocketFrame::setId(const std::shared_ptr<uuid::UUID> &id) {
+    WebsocketFrame::id = id;
+}
+
+void veezen::WebsocketFrame::setData(const folly::dynamic &data) {
+    WebsocketFrame::data = data;
+}

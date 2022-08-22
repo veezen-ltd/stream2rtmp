@@ -50,7 +50,7 @@ public:
             if (stream.second->read(f)) {
                // stream.second->popFront();
                 auto context = WebsocketContext::getInstance();
-                context->getClient(stream.first)->inCallback(f);
+                context->getClient(stream.first)->inCallback(stream.first,f);
             }
             f = nullptr;
         }
@@ -58,15 +58,19 @@ public:
             if (stream.second->read(f)) {
                 // stream.second->popFront();
                 auto context = WebsocketContext::getInstance();
-                context->getClient(stream.first)->outCallback(f);
+                context->getClient(stream.first)->outCallback(stream.first,f);
             }
             f = nullptr;
         }
     }
-    void addToOutQueue(UNIQ_ID &id, FRAME &frame)
+    void addToOutQueue(UNIQ_ID id, FRAME &frame)
     {
         auto queue = outStreams[id];
         auto pendingQueue = outPendingFrames[id];
+
+        if (queue == nullptr) {
+            return;
+        }
 
         while (!queue->isFull() && pendingQueue.size() > 0) {
             queue->write(pendingQueue.back());
@@ -78,10 +82,13 @@ public:
             pendingQueue.push_back(frame);
         }
     }
-    void addToInQueue(UNIQ_ID &id, FRAME &frame) {
+    void addToInQueue(UNIQ_ID id, FRAME &frame) {
         auto queue = inStreams[id];
         auto pendingQueue = inPendingFrames[id];
 
+        if (queue == nullptr) {
+            return;
+        }
         while (!queue->isFull() && pendingQueue.size() > 0) {
             queue->write(pendingQueue.back());
             pendingQueue.pop_back();

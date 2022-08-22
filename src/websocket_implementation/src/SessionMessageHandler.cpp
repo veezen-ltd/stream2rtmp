@@ -22,8 +22,9 @@ namespace veezen {
             return ;
         }
         context->addClient(hdl,client);
+        frame->setId(client->getId());
         context->getServer()->send(hdl,
-                                   folly::toJson(("id",client->getId()->getId())) ,
+                                   frame->toJson(),
                                    websocketpp::frame::opcode::text);
         auto streamContext = streamContext::getInstance();
         streamContext->registerInQueue(hdl);

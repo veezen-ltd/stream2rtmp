@@ -60,7 +60,7 @@ void veezen::WebsocketContext::deleteClient(connection_hdl hdl) {
 
 connection_hdl WebsocketContext::getConnection(std::shared_ptr<uuid::UUID> id) {
     for(const auto& connection : *connections) {
-        if(connection.second->getId() == id)
+        if(connection.second->getId().get() == id.get())
             return connection.first;
     }
     return connection_hdl();

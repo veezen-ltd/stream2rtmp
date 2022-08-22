@@ -10,12 +10,8 @@
 #include <map>
 #include <futures/Future.h>
 #include "WebsocketClient.h"
-typedef std::string TOKEN;
-typedef folly::Future<veezen::WebsocketFrame> STREAM;
-typedef std::shared_ptr<WebsocketClient> veeClient;
-typedef std::map<connection_hdl,veeClient,
-        std::owner_less<connection_hdl>> con_list;
-using websocketpp::connection_hdl;
+#include "types.h"
+
 
 
 

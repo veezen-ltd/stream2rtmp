@@ -3,20 +3,21 @@
 //
 
 #include "WebsocketClient.h"
+#include "WebsocketEventLoop.h"
 
-void WebsocketClient::inCallback(std::shared_ptr<veezen::WebsocketFrame> frame) {
+using streamContext = veezen::WebsocketEventLoop::streamContext;
+void WebsocketClient::inCallback(connection_hdl hdl, std::shared_ptr<veezen::WebsocketFrame> frame) {
     std::cout << "inCallback" << std::endl;
-    auto id = frame->getId();
     auto streamContext = streamContext::getInstance();
-//    auto context  = WebsocketContext::getInstance();
 
-//    if (id != nullptr)
-//    {
-//        auto hdl = context->getConnection(id);
-//        streamContext->addToOutQueue(hdl, frame);
-//    }
+
+        streamContext->addToOutQueue(hdl, frame);
+
 }
 
-void WebsocketClient::outCallback(std::shared_ptr<veezen::WebsocketFrame> frame) {
+void WebsocketClient::outCallback(connection_hdl hdl,std::shared_ptr<veezen::WebsocketFrame> frame) {
     std::cout << "outCallback" << std::endl;
+    auto context = veezen::WebsocketContext::getInstance();
+    auto server = context->getServer();
+    server->send(hdl, frame->toJson(), websocketpp::frame::opcode::text);
 }

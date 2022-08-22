@@ -5,17 +5,15 @@
 #ifndef VEEZEN2RTMP_WEBSOCKETCLIENT_H
 #define VEEZEN2RTMP_WEBSOCKETCLIENT_H
 #include "Client.h"
-
+#include <common/connection_hdl.hpp>
 #include "WebsocketFrame.h"
-#include "WebsocketEventLoop.h"
-
-using streamContext = veezen::WebsocketEventLoop::streamContext;
+using websocketpp::connection_hdl;
 
 class WebsocketClient : public veezen::Client<WebsocketClient, std::shared_ptr<veezen::WebsocketFrame>,
-        std::string> {
+        connection_hdl> {
 public:
-    void inCallback(std::shared_ptr<veezen:: WebsocketFrame> frame) override;
-    void outCallback(std::shared_ptr<veezen:: WebsocketFrame> frame) override;
+    void inCallback(connection_hdl hdl,std::shared_ptr<veezen:: WebsocketFrame> frame) override;
+    void outCallback(connection_hdl hdl,std::shared_ptr<veezen:: WebsocketFrame> frame) override;
     static  std::shared_ptr<WebsocketClient> fromDynamic(folly::dynamic json) {
         std::shared_ptr<WebsocketClient> client = std::make_shared<WebsocketClient>();
         client->fromDynamic(json);
