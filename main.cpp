@@ -12,7 +12,7 @@ DEFINE_int32(port, 9898, "port to connect to");
 int main(int argc, char **argv) {
 //    FLAGS_logtostderr = true;
 //    FLAGS_minloglevel = 0;
-
+try {
     folly::init(&argc, &argv);
     auto server = std::make_shared<veezen::WebSocketServer>(8080);
 
@@ -23,6 +23,8 @@ int main(int argc, char **argv) {
     std::getchar();
 //    rsocketServer->stop();
     server->stop();
-
+}catch(std::exception &e) {
+    std::cout << e.what() << std::endl;
+}
     return 0;
 }

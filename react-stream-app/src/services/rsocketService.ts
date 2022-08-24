@@ -27,9 +27,11 @@ private connect= () => {
 }
 
 public send(data: any , type: string, id: any = null) {
-    console.log('send', data);
     this.client.next({data: data, type: type, id: id});
 }
+
+
+
 
 
 public reset = () => {
