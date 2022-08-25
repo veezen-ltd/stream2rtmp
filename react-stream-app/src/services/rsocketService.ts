@@ -52,6 +52,7 @@ public callRemoteAPI = () => {
 private _fetchData = () => {
 
   // return the Promise the resolves the http call;
+
   console.log('calling remote api');
   return this.connect();
 };

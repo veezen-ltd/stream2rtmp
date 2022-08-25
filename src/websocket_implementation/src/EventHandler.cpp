@@ -3,7 +3,9 @@
 //
 
 #include "../includes/EventHandler.h"
-#include "../includes/WebsocketFrame.h"
+#include "../includes/WebsocketEventLoop.h"
+
+using streamContext = veezen::WebsocketEventLoop::streamContext;
 
 void veezen::EventHandler::on_open(connection_hdl hdl) {
     std::cout << "on_open" << std::endl;
@@ -11,6 +13,9 @@ void veezen::EventHandler::on_open(connection_hdl hdl) {
 
 void veezen::EventHandler::on_close(connection_hdl hdl) {
     std::cout << "on_close" << std::endl;
+    veezen::WebsocketContext::getInstance()->deleteClient(hdl);
+    streamContext::getInstance()->unRegisterInQueue(hdl);
+
 }
 
 void veezen::EventHandler::on_message(connection_hdl hdl, server_t::message_ptr msg) {

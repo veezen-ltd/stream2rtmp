@@ -36,6 +36,12 @@ public:
         }
         return instance;
     }
+    void unRegisterInQueue(UNIQ_ID id) {
+        inStreams.erase(id);
+        outStreams.erase(id);
+        inPendingFrames.erase(id);
+        outPendingFrames.erase(id);
+    }
 
     void registerInQueue(UNIQ_ID &id) {
         inStreams[id] = std::make_shared<folly::ProducerConsumerQueue<FRAME>>(5);
@@ -46,21 +52,25 @@ public:
 
     void loopAndExec() {
         FRAME f = nullptr;
-        for (auto &stream: inStreams) {
-            if (stream.second->read(f)) {
-               // stream.second->popFront();
-                auto context = WebsocketContext::getInstance();
-                context->getClient(stream.first)->inCallback(stream.first,f);
+        try {
+            for (auto &stream: inStreams) {
+                if (stream.second->read(f)) {
+                    // stream.second->popFront();
+                    auto context = WebsocketContext::getInstance();
+                    context->getClient(stream.first)->inCallback(stream.first, f);
+                }
+                f = nullptr;
             }
-            f = nullptr;
-        }
-        for (auto &stream: outStreams) {
-            if (stream.second->read(f)) {
-                // stream.second->popFront();
-                auto context = WebsocketContext::getInstance();
-                context->getClient(stream.first)->outCallback(stream.first,f);
+            for (auto &stream: outStreams) {
+                if (stream.second->read(f)) {
+                    // stream.second->popFront();
+                    auto context = WebsocketContext::getInstance();
+                    context->getClient(stream.first)->outCallback(stream.first, f);
+                }
+                f = nullptr;
             }
-            f = nullptr;
+        }catch(std::exception &e) {
+            std::cout << e.what() << std::endl;
         }
     }
     void addToOutQueue(UNIQ_ID id, FRAME &frame)

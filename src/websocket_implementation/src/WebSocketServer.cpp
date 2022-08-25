@@ -26,8 +26,12 @@ void veezen::WebSocketServer::start() {
         auto server = veezen::WebsocketContext::getInstance()->getServer();
         server->listen(port);
         server->start_accept();
-        server->run();
-    });
+        try {
+            server->run();
+        }catch(std::exception &e) {
+            std::cout << e.what() << std::endl;
+        }
+        });
     eventLoop.start();
 
 
